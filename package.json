@@ -1,0 +1,21 @@
+{
+  "name": "webgl",
+  "version": "1.0.0",
+  "description": "Simple WebGL engine\r =",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack",
+    "server": "./node_modules/.bin/webpack-dev-server --output-public-path=/dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/tony-space/webgl.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/tony-space/webgl#readme",
+  "devDependencies": {
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
