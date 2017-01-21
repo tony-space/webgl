@@ -10,5 +10,6 @@ module.exports = {
     },
     devServer: {
         inline: true
-    }
+    },
+    devtool: 'source-map'
 };
