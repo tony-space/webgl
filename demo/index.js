@@ -11,55 +11,86 @@ let vertexShaderPromise = ctx.createShader('./shaders/vertex.glsl', ctx.gl.VERTE
 let fragmentShaderPromise = ctx.createShader('./shaders/fragment.glsl', ctx.gl.FRAGMENT_SHADER);
 let programPromise = ctx.createProgram([vertexShaderPromise, fragmentShaderPromise]);
 
+let vertexData = [
+    -1, -1, 0,
+    1, -1, 0,
+    1, 1, 0,
+    -1, 1, 0
+];
+
+let colorData = [
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0,
+    1.0, 1.0, 1.0
+];
+
+let indices = [
+    0, 1, 2,
+    0, 2, 3
+];
+
+const perspective = Matrix.perspective(60, canvas.width / canvas.height, 0.1, 100.0);
+
 programPromise.then(program => {
     let gl = ctx.gl;
 
-    let vertexData = [
-        -1, -1, 0,
-        1, -1, 0,
-        1, 1, 0,
-        -1, 1, 0
-    ];
+    let translate = Matrix.translate(Matrix.vector([0, 0, -5]));
 
-    let colorData = [
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0,
-        1.0, 1.0, 1.0
-    ];
+    let mesh = ctx.createMesh(program);
+    mesh.setUniformMatrix('projection', perspective);
 
-    let indices = [
-        0, 1, 2,
-        0, 2, 3
-    ];
+    mesh.setBufferData({
+        bufferName: 'vertices',
+        target: gl.ARRAY_BUFFER,
+        data: new Float32Array(vertexData),
+        usage: gl.STATIC_DRAW,
+        dimensions: 3,
+        dataType: gl.FLOAT
+    });
 
-    let positionBuffer = gl.createBuffer();
-    let colorBuffer = gl.createBuffer();
-    let indicesBuffer = gl.createBuffer();
+    mesh.setBufferData({
+        bufferName: 'colors',
+        target: gl.ARRAY_BUFFER,
+        data: new Float32Array(colorData),
+        dimensions: 3,
+        dataType: gl.FLOAT,
+        usage: gl.STATIC_DRAW
+    });
 
-    program.use();
+    mesh.setBufferData({
+        bufferName: 'indices',
+        target: gl.ELEMENT_ARRAY_BUFFER,
+        data: new Uint16Array(indices),
+        usage: gl.STATIC_DRAW,
+        dataType: gl.UNSIGNED_SHORT,
+        mode: gl.TRIANGLES
+    });
 
-    gl.uniformMatrix4fv(program.getUniformLocation("projection"), false,
-        new Float32Array(Matrix.perspective(60, canvas.width/ canvas.height, 0.1, 100.0).toArray()));
-    gl.uniformMatrix4fv(program.getUniformLocation("modelView"), false, Matrix.translate(Matrix.vector([0, 0, -5])).toArray());
+    mesh.setAttribute({
+        buffer: 'vertices',
+        attribute: 'vPosition'
+    });
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(program.getAttributeLocation('vPosition'), 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(program.getAttributeLocation('vPosition'));
+    mesh.setAttribute({
+        buffer: 'colors',
+        attribute: 'vColor'
+    });
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(program.getAttributeLocation('vColor'), 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(program.getAttributeLocation('vColor'));
+    let angle = 0;
+    let rotation = Matrix.identity();
+    setInterval(function(){
+        angle++;
+        let cos = Math.cos(angle / 180 * Math.PI);
+        let sin = Math.sin(angle / 180 * Math.PI);
+        rotation.setValue(0, 0, cos);
+        rotation.setValue(0, 2, sin);
+        rotation.setValue(2, 0, -sin);
+        rotation.setValue(2, 2, cos);
+        mesh.setUniformMatrix('modelView', translate.mult(rotation));
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        mesh.render('indices');
+    }, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-
-    gl.finish();
 
 }).catch(console.log);
