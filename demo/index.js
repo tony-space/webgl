@@ -12,22 +12,27 @@ let fragmentShaderPromise = ctx.createShader('./shaders/fragment.glsl', ctx.gl.F
 let programPromise = ctx.createProgram([vertexShaderPromise, fragmentShaderPromise]);
 
 let vertexData = [
-    -1, -1, 0,
-    1, -1, 0,
+    0, 0, 0,
+    0, 0, 1,
+    0, 1, 0,
+    0, 1, 1,
+
+    1, 0, 0,
+    1, 0, 1,
     1, 1, 0,
-    -1, 1, 0
+    1, 1, 1,
 ];
 
-let colorData = [
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
-    1.0, 1.0, 1.0
-];
+let colorData = vertexData.slice(0);
+
+vertexData = vertexData.map((x, i) => x * 2 - 1);
 
 let indices = [
-    0, 1, 2,
-    0, 2, 3
+    0, 1, 0, 2, 0, 4,
+    1, 3, 1, 5,
+    2, 3, 2, 6,
+    4, 5, 4, 6,
+    7, 6, 7, 5, 7, 3
 ];
 
 const perspective = Matrix.perspective(60, canvas.width / canvas.height, 0.1, 100.0);
@@ -64,7 +69,7 @@ programPromise.then(program => {
         data: new Uint16Array(indices),
         usage: gl.STATIC_DRAW,
         dataType: gl.UNSIGNED_SHORT,
-        mode: gl.TRIANGLES
+        mode: gl.LINES
     });
 
     mesh.setAttribute({
