@@ -2,6 +2,7 @@
 
 import Context from '../lib/Context'
 import Matrix from '../lib/Matrix'
+import Quaternion from '../lib/Quaternion';
 
 let canvas = document.getElementById('glcanvas');
 
@@ -83,15 +84,15 @@ programPromise.then(program => {
     });
 
     let angle = 0;
-    let rotation = Matrix.identity();
-    setInterval(function(){
+    setInterval(function () {
         angle++;
-        let cos = Math.cos(angle / 180 * Math.PI);
-        let sin = Math.sin(angle / 180 * Math.PI);
-        rotation.setValue(0, 0, cos);
-        rotation.setValue(0, 2, sin);
-        rotation.setValue(2, 0, -sin);
-        rotation.setValue(2, 2, cos);
+        let rotation = Quaternion.rotateDegrees(Matrix.vector([1, 1, 0]), angle).toMatrix();
+        // let cos = Math.cos(angle / 180 * Math.PI);
+        // let sin = Math.sin(angle / 180 * Math.PI);
+        // rotation.setValue(0, 0, cos);
+        // rotation.setValue(0, 2, sin);
+        // rotation.setValue(2, 0, -sin);
+        // rotation.setValue(2, 2, cos);
         mesh.setUniformMatrix('modelView', translate.mult(rotation));
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mesh.render('indices');
