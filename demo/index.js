@@ -13,6 +13,18 @@ let fragmentShaderPromise = ctx.createShader('./shaders/fragment.glsl', ctx.gl.F
 let programPromise = ctx.createProgram([vertexShaderPromise, fragmentShaderPromise]);
 
 let vertexData = [
+    -0.5, -0.25, -1,
+    -0.5, -0.25, 1,
+    -0.5, 0.25, -1,
+    -0.5, 0.25, 1,
+
+    0.5, -0.25, -1,
+    0.5, -0.25, 1,
+    0.5, 0.25, -1,
+    0.5, 0.25, 1
+];
+
+let colorData = [
     0, 0, 0,
     0, 0, 1,
     0, 1, 0,
@@ -21,12 +33,8 @@ let vertexData = [
     1, 0, 0,
     1, 0, 1,
     1, 1, 0,
-    1, 1, 1,
+    1, 1, 1
 ];
-
-let colorData = vertexData.slice(0);
-
-vertexData = vertexData.map((x, i) => x * 2 - 1);
 
 let indices = [
     0, 1, 0, 2, 0, 4,
@@ -83,17 +91,28 @@ programPromise.then(program => {
         attribute: 'vColor'
     });
 
-    let angle = 0;
-    setInterval(function () {
-        angle++;
-        let rotation = Quaternion.rotateDegrees(Matrix.vector([1, 1, 0]), angle).toMatrix();
-        // let cos = Math.cos(angle / 180 * Math.PI);
-        // let sin = Math.sin(angle / 180 * Math.PI);
-        // rotation.setValue(0, 0, cos);
-        // rotation.setValue(0, 2, sin);
-        // rotation.setValue(2, 0, -sin);
-        // rotation.setValue(2, 2, cos);
-        mesh.setUniformMatrix('modelView', translate.mult(rotation));
+    let initial = Quaternion.rotateDegrees(Matrix.vector([0, 0, 0]), 0);
+    let final = Quaternion.rotateDegrees(Matrix.vector([0, 1, 0]), 135)
+        .mult(Quaternion.rotateDegrees(Matrix.vector([0, 0, 1]), 180));
+
+    function interpolateRotation(initial, final, step){
+        let delta = initial.conjugate().mult(final);
+        let axis = delta.toAxis();
+        let radians = axis.length();
+
+        return initial.mult(Quaternion.rotateRadians(axis, radians * step))
+    }
+
+    let step = 0;
+    let steps = 1000;
+    let interval = setInterval(function () {
+
+        let rotation = interpolateRotation(initial, final, step / steps);
+        step++;
+        if (step > steps)
+            clearInterval(interval);
+
+        mesh.setUniformMatrix('modelView', translate.mult(rotation.toMatrix()));
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mesh.render('indices');
     }, 0);
