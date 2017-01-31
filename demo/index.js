@@ -1,8 +1,12 @@
 'use strict';
 
-import Context from '../lib/Context'
-import Matrix from '../lib/Matrix'
-import Quaternion from '../lib/Quaternion';
+// import Context from '../lib/Context'
+// import Matrix from '../lib/Matrix'
+// import Quaternion from '../lib/Quaternion';
+
+let Context = WEBGL;
+let Matrix = WEBGL.Matrix;
+let Quaternion = WEBGL.Quaternion;
 
 let canvas = document.getElementById('glcanvas');
 
