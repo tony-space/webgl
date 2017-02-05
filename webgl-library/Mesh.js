@@ -1,6 +1,6 @@
 'use strict';
 
-import Matrix from './Matrix'
+import Matrix from './Matrix';
 
 class Mesh {
 
@@ -29,7 +29,17 @@ class Mesh {
         let gl = this._context.gl;
 
         this._program.use();
-        gl[`uniformMatrix${matrix.rows}fv`](location, false, matrix.toFloat32Array());
+        switch (matrix.rows){
+            case 2:
+                gl.uniformMatrix2fv(location, false, matrix.toFloat32Array());
+                break;
+            case 3:
+                gl.uniformMatrix3fv(location, false, matrix.toFloat32Array());
+                break;
+            case 4:
+                gl.uniformMatrix4fv(location, false, matrix.toFloat32Array());
+                break;
+        }
     }
 
     /**
@@ -94,6 +104,29 @@ class Mesh {
         }
     }
 
+
+    /**
+     * @param {string} attributeName
+     * @param {Array<number>} data
+     */
+    loadAttribute3f(attributeName, data){
+        const gl = this._context.gl;
+
+        this.setBufferData({
+            bufferName: attributeName,
+            target: gl.ARRAY_BUFFER,
+            data: new Float32Array(data),
+            usage: gl.STATIC_DRAW,
+            dimensions: 3,
+            dataType: gl.FLOAT
+        });
+
+        this.setAttribute({
+            buffer: attributeName,
+            attribute: attributeName
+        });
+    }
+
     /**
      * @param {string} indicesBuffer
      */
@@ -103,6 +136,7 @@ class Mesh {
         if(!buffer)
             throw new Error('invalid buffer name');
 
+        gl.bindBuffer(buffer.target, buffer.handle);
         gl.drawElements(buffer.mode, buffer.length, buffer.dataType, 0);
     }
 

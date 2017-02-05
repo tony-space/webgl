@@ -1,8 +1,8 @@
 'use strict';
 
-import Shader from './Shader'
-import Program from './Program'
-import Mesh from './Mesh'
+import Shader from './Shader';
+import Program from './Program';
+import Mesh from './Mesh';
 
 /**
  * The most important class of entire library
@@ -93,7 +93,7 @@ class Context {
                 }
 
                 return new Program(this, shaders, program);
-            })
+            });
     }
 
     /**

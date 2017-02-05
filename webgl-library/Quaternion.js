@@ -50,14 +50,25 @@ class Quaternion {
      * @returns {Quaternion}
      */
     conjugate() {
-        return new Quaternion(this._w, this._v.mult(-1))
+        return new Quaternion(this._w, this._v.mult(-1));
     }
 
     /**
      * @returns Matrix returns axial vector
      */
     toAxis(){
-        return this._v.mult(2 * Math.acos(this._w) / this._v.length());
+        let length = this._v.length();
+        if(length === 0)
+            return Matrix.vector([0, 0, 0]);
+
+        let angle = 2 * Math.acos(this._w);
+
+        if(angle > Math.PI)
+            angle = angle - 2 * Math.PI;
+        if(angle < -Math.PI)
+            angle = angle + 2 * Math.PI;
+
+        return this._v.mult(angle / length);
     }
 
     /**

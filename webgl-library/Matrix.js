@@ -149,19 +149,46 @@ class Matrix {
     }
 
     /**
+     * @param {number} i
+     * @param {number} j
+     */
+    swapRows(i, j) {
+        if (i === j) return;
+        for (let column = 0; column < this.columns; ++column) {
+            let temp = this.getValue(i, column);
+            this.setValue(i, column, this.getValue(j, column));
+            this.setValue(j, column, temp);
+        }
+    }
+
+    _findNonZeroUnder(row, column) {
+        while (row < this.rows) {
+            if (this.getValue(row, column))
+                return row;
+            row++;
+        }
+        return null;
+    }
+
+    /**
      * @returns {Matrix}
      */
     inverse() {
         if (this.rows != this.columns || this.rows < 1)
             throw new TypeError("invalid matrix sizes");
 
-        let result = Matrix.createIdentityMatrix(this.rows);
+        let result = Matrix.identity(this.rows);
         let self = this.clone();
 
         for (let i = 0; i < self.rows; ++i) {
-            let diagonal = self.getValue(i, i);
-            if (diagonal === 0)
+            let row = self._findNonZeroUnder(i, i);
+            if (row === null)
                 throw new Error("determinants equals zero");
+
+            self.swapRows(i, row);
+            result.swapRows(i, row);
+
+            let diagonal = self.getValue(i, i);
 
             for (let j = 0; j < self.columns; ++j) {
                 self.setValue(i, j, self.getValue(i, j) / diagonal);
@@ -222,7 +249,7 @@ class Matrix {
      * @returns {number}
      */
     length() {
-        if(!Matrix.isVector(this))
+        if (!Matrix.isVector(this))
             throw TypeError('this is not vector');
 
         return Math.sqrt(this.dot(this));
@@ -260,7 +287,7 @@ class Matrix {
      * @param {number} [dimension]
      * @returns {boolean}
      */
-    static isVector(tensor, dimension){
+    static isVector(tensor, dimension) {
         return tensor instanceof Matrix && tensor.columns === 1 && (dimension === undefined || tensor.rows === dimension);
     }
 

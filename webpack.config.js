@@ -3,13 +3,10 @@
 const path = require('path');
 
 module.exports = {
-    entry: './demo/index.js',
+    entry: './demo-src/app.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
     },
-    devServer: {
-        inline: true
-    },
-    devtool: 'source-map'
+    devtool: "source-map"
 };
