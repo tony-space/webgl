@@ -25,14 +25,14 @@ Promise.all([objPromise, programPromise]).then(results => {
 
     let mesh = ctx.createMesh(program);
 
-    mesh.setUniformMatrix('projection', perspective);
-    mesh.loadAttribute3f('vPosition', objFile.vertices);
-    mesh.loadAttribute3f('vColor', objFile.vertices.map(v => 1));
+    mesh.setUniformMatrix('uProjection', perspective);
+    mesh.loadAttribute3f('aPosition', objFile.getVerticesArray());
+    mesh.loadAttribute3f('aNormal', objFile.getNormalsArray());
 
     mesh.setBufferData({
         bufferName: 'triangles',
         target: gl.ELEMENT_ARRAY_BUFFER,
-        data: new Uint16Array(objFile.triangles),
+        data: new Uint16Array(objFile.getTrianglesArray()),
         usage: gl.STATIC_DRAW,
         dataType: gl.UNSIGNED_SHORT,
         mode: gl.TRIANGLES
@@ -41,7 +41,7 @@ Promise.all([objPromise, programPromise]).then(results => {
     mesh.setBufferData({
         bufferName: 'lines',
         target: gl.ELEMENT_ARRAY_BUFFER,
-        data: new Uint16Array(objFile.lines),
+        data: new Uint16Array(objFile.getLinesArray()),
         usage: gl.STATIC_DRAW,
         dataType: gl.UNSIGNED_SHORT,
         mode: gl.LINES
@@ -50,9 +50,9 @@ Promise.all([objPromise, programPromise]).then(results => {
     let rotation = Quaternion.rotateDegrees(Matrix.vector([0, 0, 0]), 0);
     setInterval(function () {
         rotation = rotation.mult(Quaternion.rotateDegrees(Matrix.vector([0, 1, 0]), 0.1));
-        mesh.setUniformMatrix('modelView', translate.mult(rotation.toMatrix()));
+        mesh.setUniformMatrix('uModelView', translate.mult(rotation.toMatrix()));
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        //mesh.render('triangles');
-        mesh.render('lines');
+        mesh.render('triangles');
+        //mesh.render('lines');
     }, 0);
 });
