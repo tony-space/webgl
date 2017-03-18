@@ -37,6 +37,9 @@ class ObjFile {
         });
     }
 
+    /**
+     * @returns {Array<Matrix>}
+     */
     getNormalsArray() {
         let verticesTriangles = new Array(this._vertices.length);
         let result = [];
@@ -65,19 +68,17 @@ class ObjFile {
             });
 
             normal = normal.mult(1 / normal.length());
-
-            result.push(normal.getValue(0));
-            result.push(normal.getValue(1));
-            result.push(normal.getValue(2));
+            result.push(normal);
         });
 
         return result;
     }
 
+    /**
+     * @returns {Array<Matrix>}
+     */
     getVerticesArray() {
-        let result = [];
-        this._vertices.forEach(vertex => result = result.concat(vertex));
-        return result;
+        return this._vertices.map(v => Matrix.vector(v));
     }
 
     /**
