@@ -1,6 +1,6 @@
 'use strict';
 
-import Matrix from './Matrix';
+import Matrix from '../math/Matrix';
 
 class Mesh {
 

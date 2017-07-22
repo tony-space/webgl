@@ -1,6 +1,6 @@
 'use strict';
 
-import Matrix from './Matrix';
+import Matrix from '../math/Matrix';
 
 class ObjFile {
     /**
@@ -14,7 +14,7 @@ class ObjFile {
 
         lines.forEach(line => {
             let tokens = line.split(' ');
-            if (tokens.length != 4)
+            if (tokens.length !== 4)
                 return;
 
             switch (tokens[0]) {

@@ -1,6 +1,6 @@
 'use strict';
 
-import Matrix from '../../webgl-library/Matrix';
+import Matrix from '../../webgl-library/math/Matrix';
 
 class Lattice {
     /**

@@ -77,7 +77,7 @@ class Matrix {
      * @returns {Matrix}
      */
     add(matrix) {
-        if (matrix.rows != this.rows || matrix.columns != this.columns)
+        if (matrix.rows !== this.rows || matrix.columns !== this.columns)
             throw new TypeError("invalid argument");
 
         let result = new Matrix(this.rows, this.columns);
@@ -92,7 +92,7 @@ class Matrix {
      * @returns {Matrix}
      */
     sub(matrix) {
-        if (matrix.rows != this.rows || matrix.columns != this.columns)
+        if (matrix.rows !== this.rows || matrix.columns !== this.columns)
             throw new TypeError("invalid argument");
 
         let result = new Matrix(this.rows, this.columns);
@@ -115,7 +115,7 @@ class Matrix {
             return result;
         }
         else if (tensor instanceof Matrix) {
-            if (this.columns != tensor.rows)
+            if (this.columns !== tensor.rows)
                 throw new RangeError("invalid size");
 
             let result = new Matrix(this.rows, tensor.columns);
@@ -174,7 +174,7 @@ class Matrix {
      * @returns {Matrix}
      */
     inverse() {
-        if (this.rows != this.columns || this.rows < 1)
+        if (this.rows !== this.columns || this.rows < 1)
             throw new TypeError("invalid matrix sizes");
 
         let result = Matrix.identity(this.rows);

@@ -1,8 +1,8 @@
 'use strict';
 
-import Context from '../../webgl-library/Context';
-import Matrix from '../../webgl-library/Matrix';
-import Quaternion from '../../webgl-library/Quaternion';
+import Context from '../../webgl-library/core/Context';
+import Matrix from '../../webgl-library/math/Matrix';
+import Quaternion from '../../webgl-library/math/Quaternion';
 
 import Lattice from './lattice';
 
